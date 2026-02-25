@@ -28,13 +28,29 @@ public class BankAccount {
         balance += amount;
     }
 
-    public void withdraw(double amount) {
+    public boolean withdraw(double amount) {
         if (amount <= 0) {
             throw new IllegalArgumentException("Withdraw amount must be > 0.");
         }
         if (amount > balance) {
-            throw new IllegalArgumentException("Cannot withdraw more than current balance.");
+            // throw new IllegalArgumentException("Cannot withdraw more than current
+            // balance.");
+            return false;
         }
+
         balance -= amount;
+        return true;
+    }
+
+    public static void main(String[] args) {
+        BankAccount account = new BankAccount("123456789", 0);
+        account.deposit(100);
+
+        System.out.println("Account Number: " + account.getAccountNumber());
+        System.out.println("Balance: " + account.getBalance());
+
+        account.withdraw(-130);
+        System.out.println("Balance after withdrawal: " + account.getBalance());
+
     }
 }
