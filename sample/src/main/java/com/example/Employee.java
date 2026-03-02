@@ -5,6 +5,13 @@ abstract class Employee {
     protected String name;
 
     public Employee(String id, String name) {
+        if (id == null || id.isBlank()) {
+            throw new IllegalArgumentException("id không được null hoặc rỗng");
+        }
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("name không được null hoặc rỗng");
+        }
+
         this.id = id;
         this.name = name;
     }
@@ -20,4 +27,3 @@ abstract class Employee {
     // KHÔNG được implement
     public abstract double calculateSalary();
 }
-
