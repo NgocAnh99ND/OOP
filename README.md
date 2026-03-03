@@ -1,67 +1,58 @@
-1.	Vì sao Employee phải là abstract?
-Vì Employee là khái niệm chung, không đủ thông tin để tạo đối tượng cụ thể.
-	•	Không tồn tại “nhân viên chung chung”
-	•	Chỉ tồn tại:
-	•	FullTimeEmployee
-	•	PartTimeEmployee
-Ngoài ra:
-	•	Employee có abstract method calculateSalary()
-	•	Class chứa abstract method bắt buộc phải là abstract 
+Câu 2:
 
-2.	Nếu implement calculateSalary() trong Employee thì có hợp lý không?
-Không hợp lý trong bài này.
-Vì:
-	•	Mỗi loại nhân viên có cách tính lương khác nhau
-	•	Employee không thể định nghĩa một công thức chung
+	1.	Vì sao Connectable không nên là abstract class?
+	⁃	Connectable chỉ mô tả một khả năng kết nối WiFi, không phải là bản chất hay một loại đối tượng cụ thể. Nó không có state hay logic chung để tái sử dụng, vì mỗi thiết bị kết nối WiFi theo cách khác nhau. Abstract class thường phù hợp khi có code hoặc trạng thái chung cho các lớp con. Ngoài ra, Java chỉ cho phép kế thừa một class, nên nếu dùng abstract class sẽ làm giảm tính linh hoạt.  Nếu Connectable là abstract class, SmartTV phải extends Connectable . Lúc đó SmartTV không thể extends một class khác quan trọng hơn (ví dụ TV). Vì vậy Connectable nên là interface. Tuy nhiên, việc dùng abstract class vẫn không sai về mặt logic hay khả năng chạy chương trình, mà chỉ là kém phù hợp về mặt thiết kế
+	2.	Vì sao LightBulb không cần connectWifi?
+	⁃	Nguyên tắc ISP (Interface Segregation Principle): Không nên ép một class phải phụ thuộc vào những phương thức mà nó không sử dụng.
+	⁃	Đèn chỉ có 1 nhóm chức năng chính:
+	•	Bật (turnOn)
+	•	Tắt (turnOff)
+    Nó không có khả năng kết nối WiFi; nếu ép nó implement thì sẽ tạo method “rác” hoặc hành vi giả, vi phạm ISP.
+	3.	Nếu SmartTV đã extends Device thì có thể extends thêm Connectable không?
+Không vì trong Java: Một class chỉ được extends 1 class duy nhất
+	4.	Một class có thể implement bao nhiêu interface?
+	⁃	Một class có thể implement nhiều interface ( không giới hạn)
+Java cấm đa kế thừa class để tránh mơ hồ và xung đột state/logic, nhưng cho phép implement nhiều interface để ghép nhiều “khả năng” một cách linh hoạt và an toàn.
 
-3.	Khi nào nên dùng abstract class thay vì interface?
-Nếu các đối tượng khác nhau nhưng cùng là “một loại” và có dữ liệu chung → abstract class
-Nếu chỉ mô tả khả năng/hành vi mà nhiều loại đối tượng khác nhau có thể có → interface
-4.	Sự khác nhau giữa kế thừa và trừu tượng là gì?
-👉 Trừu tượng (Abstraction)
-Là việc chỉ nói “cần làm gì”, không nói “làm như thế nào”.
-→ Dùng để định nghĩa khuôn mẫu / hợp đồng chung.
-👉 Kế thừa (Inheritance)
-Là việc lớp con nhận lại và thực hiện những gì lớp cha đã định nghĩa.
-→ Dùng để tái sử dụng và mở rộng.
-Trừu tượng trả lời: Làm gì?
-Kế thừa trả lời: Làm như thế nào?
-	5.	BÀI NÂNG CAO 
-Trong Employee thêm:
-
-public void printInfo() {
-    System.out.println(id + " - " + name);
+Câu 3:
+	1.	Biến trong interface mặc định là gì?
+	⁃	Mọi biến trong interface mặc định là: public static final
+	⁃	Đoạn code đúng là:
+interface Switchable {
+    public static final int power = 100;
 }
+	2.	Interface có constructor không?
+Không thể có constructor trong interface vì Interface không tạo được object. Constructor chỉ dùng khi tạo object
+→ Interface không cần và không thể có coóntructor
+	3.	Interface có thể có private method không? (Java 9+)
+	⁃	Từ Java 9, Interface  có private method 
+	⁃	Private method trong interface chỉ tồn tại để phục vụ các default method, chỉ dùng bên trong interface, không cho class implement nhìn thấy hay gọi.
+	4.	Vì sao interface cần private method? (Java 9+)
+Trước Java 8:
+	•	Interface chỉ có method abstract
+Java 8:
+	•	Có default method
+	•	Bắt đầu có code
+👉 Khi có nhiều default method, sẽ lặp code.
+Private method sinh ra để:
+	•	Gom code chung
+	•	Tránh copy-paste
+	•	Nhưng không làm lộ ra ngoài
+	⁃	VD: 
+interface Switchable {
 
-Hỏi :
-	•	Tại sao method này không abstract?
-Vì mọi nhân viên đều có id và name,
-và cách in thông tin là giống nhau, không phụ thuộc vào loại nhân viên,
-nên printInfo() không cần trừu tượng và có thể được cài đặt ngay trong lớp cha.
-	•	Vì sao abstract class có thể chứa method thường?
-Abstract class vẫn là một class bình thường,
-nhưng cho phép chứa abstract method và không thể khởi tạo trực tiếp.
-Abstract class được tạo ra để:
-	•	Chia sẻ những phần giống nhau cho các lớp con
-	•	Trừu tượng hóa những phần khác nhau
-Những gì:
-	•	Giống nhau → viết thành method thường
-	•	Khác nhau → để abstract method
+    default void turnOn() {
+        commonSteps();
+        System.out.println("Turning ON");
+    }
 
-	6.	BÀI test hiểu sâu
-Cho code:
-class Employee {
-    double calculateSalary() {
-        return 0;
+    default void turnOff() {
+        commonSteps();
+        System.out.println("Turning OFF");
+    }
+
+    private void commonSteps() {
+        System.out.println("Check power");
+        System.out.println("Log action");
     }
 }
-
-Hỏi:
-	•	Thiết kế này có đúng trừu tượng không?
-KHÔNG đúng trừu tượng.
-Vì sao?
-	•	Employee đã cài đặt sẵn cách tính lương (return 0)
-	•	Trong khi thực tế:
-	•	Mỗi loại nhân viên có cách tính khác nhau
-	•	Lớp cha không biết cách tính cụ thể
-	•	Nếu sau này thêm CommissionEmployee thì sao?
