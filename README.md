@@ -1,58 +1,52 @@
-Câu 2:
-
-	1.	Vì sao Connectable không nên là abstract class?
-	⁃	Connectable chỉ mô tả một khả năng kết nối WiFi, không phải là bản chất hay một loại đối tượng cụ thể. Nó không có state hay logic chung để tái sử dụng, vì mỗi thiết bị kết nối WiFi theo cách khác nhau. Abstract class thường phù hợp khi có code hoặc trạng thái chung cho các lớp con. Ngoài ra, Java chỉ cho phép kế thừa một class, nên nếu dùng abstract class sẽ làm giảm tính linh hoạt.  Nếu Connectable là abstract class, SmartTV phải extends Connectable . Lúc đó SmartTV không thể extends một class khác quan trọng hơn (ví dụ TV). Vì vậy Connectable nên là interface. Tuy nhiên, việc dùng abstract class vẫn không sai về mặt logic hay khả năng chạy chương trình, mà chỉ là kém phù hợp về mặt thiết kế
-	2.	Vì sao LightBulb không cần connectWifi?
-	⁃	Nguyên tắc ISP (Interface Segregation Principle): Không nên ép một class phải phụ thuộc vào những phương thức mà nó không sử dụng.
-	⁃	Đèn chỉ có 1 nhóm chức năng chính:
-	•	Bật (turnOn)
-	•	Tắt (turnOff)
-    Nó không có khả năng kết nối WiFi; nếu ép nó implement thì sẽ tạo method “rác” hoặc hành vi giả, vi phạm ISP.
-	3.	Nếu SmartTV đã extends Device thì có thể extends thêm Connectable không?
-Không vì trong Java: Một class chỉ được extends 1 class duy nhất
-	4.	Một class có thể implement bao nhiêu interface?
-	⁃	Một class có thể implement nhiều interface ( không giới hạn)
-Java cấm đa kế thừa class để tránh mơ hồ và xung đột state/logic, nhưng cho phép implement nhiều interface để ghép nhiều “khả năng” một cách linh hoạt và an toàn.
-
-Câu 3:
-	1.	Biến trong interface mặc định là gì?
-	⁃	Mọi biến trong interface mặc định là: public static final
-	⁃	Đoạn code đúng là:
-interface Switchable {
-    public static final int power = 100;
+BT2.1:
+	1.	Vì sao Dog is-a Animal?
+Dog is-a Animal vì Dog là một loại Animal.
+Nói cách khác:
+	•	Animal là khái niệm tổng quát (general).
+	•	Dog là một trường hợp cụ thể của Animal
+Trong OOP, quan hệ is-a được thể hiện bằng kế thừa (extends). Điều này có nghĩa:
+	•	Dog kế thừa thuộc tính: name, age
+	•	Dog kế thừa phương thức: eat(), sleep(), makeSound()
+	2.	Nếu Elephant được thêm vào hệ thống thì phải làm gì?
+	⁃	Ta chỉ cần tạo một class Elephant kế thừa Animal.
+public class Elephant extends Animal {
+    private double weight;
+    public Elephant(String name, int age, double weight) {
+        super(name, age);
+        this.weight = weight;
+    }
+    public void trumpet() {
+        System.out.println(name + " is trumpeting");
+    }
 }
-	2.	Interface có constructor không?
-Không thể có constructor trong interface vì Interface không tạo được object. Constructor chỉ dùng khi tạo object
-→ Interface không cần và không thể có coóntructor
-	3.	Interface có thể có private method không? (Java 9+)
-	⁃	Từ Java 9, Interface  có private method 
-	⁃	Private method trong interface chỉ tồn tại để phục vụ các default method, chỉ dùng bên trong interface, không cho class implement nhìn thấy hay gọi.
-	4.	Vì sao interface cần private method? (Java 9+)
-Trước Java 8:
-	•	Interface chỉ có method abstract
-Java 8:
-	•	Có default method
-	•	Bắt đầu có code
-👉 Khi có nhiều default method, sẽ lặp code.
-Private method sinh ra để:
-	•	Gom code chung
-	•	Tránh copy-paste
-	•	Nhưng không làm lộ ra ngoài
-	⁃	VD: 
-interface Switchable {
+	⁃	Sau đó tạo object: 
+Elephant elephant = new Elephant("Dumbo", 5, 500);
+	3.	Lớp Animal đã có method eat() thì Dog có cần viết lại không? Tại sao?
+Không cần viết lại method eat() vì Dog kế thừa phương thức này từ lớp Animal. Tuy nhiên, nếu muốn thay đổi hành vi của phương thức cho phù hợp với Dog, ta có thể override method eat() trong lớp Dog.
+	4.	Khi nào cần dùng super()?
+super() được dùng để gọi constructor của lớp cha, lớp cha cần được khởi tạo trước để thiết lập các thuộc tính chung, sau đó lớp con mới tiếp tục khởi tạo các thuộc tính riêng của mình.
+BT2.2: 
+	1.	Nếu lớp Dog không khai báo lại phương thức eat() thì khi gọi:
+Dog dog = new Dog("Buddy", 3, "Golden");
+dog.eat();
+Phương thức eat() của lớp Animal sẽ được thực thi. Vì Dog kế thừa từ Animal và không override phương thức eat(), nên Dog sẽ sử dụng phương thức eat() được kế thừa từ lớp cha.
+	2.	Nếu lớp Dog override phương thức eat() như sau:
 
-    default void turnOn() {
-        commonSteps();
-        System.out.println("Turning ON");
-    }
+@Override
+public void eat() {
+    System.out.println(name + " is eating dog food");
+}
+	⁃	Khi gọi dog.eat() thì phương thức eat() của lớp Dog sẽ được thực thi, vì Dog đã override phương thức eat() của lớp Animal.
+	⁃	Phương thức eat() của lớp Animal vẫn có thể được dùng, nhưng không được gọi tự động  khi gọi dog.eat(). Nếu muốn dùng lại method này của lớp cha, ta có thể gọi bằng super.eat().
+	3.	Nếu trong lớp Dog ta muốn vừa dùng hành vi của Animal, vừa thêm hành vi riêng, hãy viết lại phương thức eat() bằng cách sử dụng super.
 
-    default void turnOff() {
-        commonSteps();
-        System.out.println("Turning OFF");
-    }
+Ví dụ kết quả mong muốn phương thức eat() phải in ra:
+Buddy is eating
+Dog eats dog food
 
-    private void commonSteps() {
-        System.out.println("Check power");
-        System.out.println("Log action");
-    }
+Thì viết lại phương thức eat() như sau:
+@Override
+public void eat() {
+    super.eat(); 
+    System.out.println(name + " eats dog food");
 }
