@@ -1,52 +1,47 @@
-BT2.1:
-	1.	Vì sao Dog is-a Animal?
-Dog is-a Animal vì Dog là một loại Animal.
-Nói cách khác:
-	•	Animal là khái niệm tổng quát (general).
-	•	Dog là một trường hợp cụ thể của Animal
-Trong OOP, quan hệ is-a được thể hiện bằng kế thừa (extends). Điều này có nghĩa:
-	•	Dog kế thừa thuộc tính: name, age
-	•	Dog kế thừa phương thức: eat(), sleep(), makeSound()
-	2.	Nếu Elephant được thêm vào hệ thống thì phải làm gì?
-	⁃	Ta chỉ cần tạo một class Elephant kế thừa Animal.
-public class Elephant extends Animal {
-    private double weight;
-    public Elephant(String name, int age, double weight) {
-        super(name, age);
-        this.weight = weight;
-    }
-    public void trumpet() {
-        System.out.println(name + " is trumpeting");
-    }
-}
-	⁃	Sau đó tạo object: 
-Elephant elephant = new Elephant("Dumbo", 5, 500);
-	3.	Lớp Animal đã có method eat() thì Dog có cần viết lại không? Tại sao?
-Không cần viết lại method eat() vì Dog kế thừa phương thức này từ lớp Animal. Tuy nhiên, nếu muốn thay đổi hành vi của phương thức cho phù hợp với Dog, ta có thể override method eat() trong lớp Dog.
-	4.	Khi nào cần dùng super()?
-super() được dùng để gọi constructor của lớp cha, lớp cha cần được khởi tạo trước để thiết lập các thuộc tính chung, sau đó lớp con mới tiếp tục khởi tạo các thuộc tính riêng của mình.
-BT2.2: 
-	1.	Nếu lớp Dog không khai báo lại phương thức eat() thì khi gọi:
-Dog dog = new Dog("Buddy", 3, "Golden");
-dog.eat();
-Phương thức eat() của lớp Animal sẽ được thực thi. Vì Dog kế thừa từ Animal và không override phương thức eat(), nên Dog sẽ sử dụng phương thức eat() được kế thừa từ lớp cha.
-	2.	Nếu lớp Dog override phương thức eat() như sau:
+BT1:
+	1.	Car có method start() không?
+Car không định nghĩa method start(), nhưng nó có thể sử dụng method này vì được kế thừa từ class cha Vehicle.
+	2.	Method đó được định nghĩa ở đâu?
+Method start() được định nghĩa trong class Vehicle.
+	3.	Nếu xóa method start() trong Vehicle thì chuyện gì xảy ra?
+Nếu xóa method start() trong Vehicle thì chương trình sẽ bị lỗi compile vì Car không còn kế thừa method start() để gọi car.start().
+Java sẽ đi tìm method start() theo thứ tự:
+	1.	Tìm trong Car → không có
+	2.	Tìm trong Vehicle → cũng không có (vì đã xóa)
+➡️ Không tìm thấy method start(), nên chương trình không biên dịch được.
 
-@Override
-public void eat() {
-    System.out.println(name + " is eating dog food");
-}
-	⁃	Khi gọi dog.eat() thì phương thức eat() của lớp Dog sẽ được thực thi, vì Dog đã override phương thức eat() của lớp Animal.
-	⁃	Phương thức eat() của lớp Animal vẫn có thể được dùng, nhưng không được gọi tự động  khi gọi dog.eat(). Nếu muốn dùng lại method này của lớp cha, ta có thể gọi bằng super.eat().
-	3.	Nếu trong lớp Dog ta muốn vừa dùng hành vi của Animal, vừa thêm hành vi riêng, hãy viết lại phương thức eat() bằng cách sử dụng super.
+BT2: 
+	1.	Vì sao cần @Override?
+	⁃	@Override dùng để cho Java biết rằng method này đang ghi đè (override) method của lớp cha.
+	⁃	Đảm bảo rằng method đang ghi đè đúng method của lớp cha và tránh lỗi viết sai.
+	2.	Điều gì xảy ra nếu method signature khác?
+Nếu method signature khác (khác tên hoặc khác tham số) thì method đó không còn là override nữa.
+Java sẽ coi đó là một method mới trong class con. Kết quả:
+Khi gọi method, chương trình sẽ chạy method của class cha, không phải của class con.
+	3.	Nếu không override thì kết quả sẽ thế nào?
+Nếu không override, thì class con sẽ dùng method của class cha. Vì Dog không có method makeSound(), nên Java sẽ sử dụng method trong class Animal.
 
-Ví dụ kết quả mong muốn phương thức eat() phải in ra:
-Buddy is eating
-Dog eats dog food
+BT4:
+	1.	Nếu không gọi super() thì điều gì xảy ra?
+Nếu không gọi super(name, age), chương trình sẽ bị lỗi compile.
+Vì sao?
+Vì class Person chỉ có constructor:
+Person(String name, int age)
+Khi Student tạo object, Java sẽ tự động cố gọi:
+super();
+Nhưng Person không có constructor Person(), nên Java không biết phải gọi constructor nào.
+➡️ Kết quả: lỗi compile.
 
-Thì viết lại phương thức eat() như sau:
-@Override
-public void eat() {
-    super.eat(); 
-    System.out.println(name + " eats dog food");
-}
+	2.	Vì sao constructor của lớp cha phải chạy trước?
+Constructor của lớp cha phải chạy trước vì lớp con được xây dựng dựa trên lớp cha.
+Lớp cha chứa những thông tin cơ bản, nên phải được tạo trước. Sau đó lớp con mới thêm phần của mình.
+
+Ví dụ
+	•	Person có: name, age
+	•	Student = Person + studentId
+Khi tạo Student:
+
+Student s = new Student("John", 20, "S123");
+
+Java sẽ làm theo thứ tự:
+1️⃣ Tạo phần Person trước (name, age) 2️⃣ Sau đó tạo phần Student (studentId)
